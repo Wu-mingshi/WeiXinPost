@@ -57,7 +57,21 @@ def get_Today_Week():
     today = datetime.today()
     d_days = today - startWeek
     trueWeek = (d_days.days // 7) + 1
-    return str(trueWeek)
+    
+    # 添加调试信息
+    print(f"开学日期: {startWeek}")
+    print(f"今天日期: {today}")
+    print(f"天数差: {d_days.days}")
+    print(f"计算出的周数: {trueWeek}")
+    print(f"课程表包含的周数: {list(config.classes.keys())}")
+    
+    # 确保周数在课程表范围内
+    week_str = str(trueWeek)
+    if week_str not in config.classes:
+        print(f"警告: 周数 {week_str} 不在课程表范围内，使用第一周")
+        week_str = "1"  # 默认使用第一周
+    
+    return week_str
 
 
 # 获取本周课程
@@ -67,6 +81,13 @@ def get_Week_Classes(w):
     else:
         week = get_Today_Week()
         week_Class = config.classes.get(week)
+    
+    # 添加安全检查
+    if week_Class is None:
+        print(f"错误: 无法获取周数 {w} 的课程表，使用默认课程表")
+        # 返回一个默认的空课程表结构
+        return [['' for _ in range(6)] for _ in range(7)]
+    
     return week_Class
 
 
@@ -397,3 +418,4 @@ if __name__ == '__main__':
             print("开始睡眠:等待推送晚安心语")
             time.sleep(defference)
             print("结束睡眠")
+
